@@ -1,10 +1,16 @@
 {
-  "nom": "Nom du projet",
-  "pitch": "Une phrase qui dit ce que fait le projet.",
-  "description": "Premier paragraphe : le problème que vous résolvez.\n\nDeuxième paragraphe : comment ça marche, et ce que vous avez construit en trois jours.",
-  "ecoles": ["École 1", "École 2"],
-  "stack": ["HTML", "JavaScript"],
+  "nom": "FindMyWay2Work",
+  "pitch": "Découvre les métiers qui te ressemblent en classant des situations réelles, pas avec un test de personnalité interminable.",
+  "description": "Les jeunes de 15 à 25 ans doivent choisir une voie sans vraiment savoir à quoi ressemble le quotidien d’un métier. FindMyWay2Work transforme cette question en jeu : un profil rapide, des mises en situation concrètes générées par IA et un classement personnel.\n\nLe joueur reçoit entre 10 et 15 notifications qui tombent en même temps, les classe par priorité, puis note son ressenti. Le code calcule une note de réussite, croise le tout avec les centres d’intérêt, la sociabilité et les attentes du profil, puis affiche un top 5 recalculé à chaque visite. Le site est entièrement bilingue FR/EN, responsive, et aucune donnée utilisateur n’est envoyée à l’API d’IA.",
+  "ecoles": [],
+  "stack": ["PHP", "MySQL", "HTML", "CSS", "JavaScript", "API DeepSeek"],
   "demo": "",
   "video": "",
-  "captures": []
+  "captures": [
+    "captures/accueil.png",
+    "captures/metiers.png",
+    "captures/jeu.png",
+    "captures/top5.png",
+    "captures/jeu-mobile.png"
+  ]
 }
