@@ -36,7 +36,7 @@ $lienActif = static fn (string $cle): string => $page_active === $cle ? ' aria-c
         <div class="entete__panneau" id="navigation-principale" data-menu-panneau>
             <nav class="nav" aria-label="<?= e(t('nav.principale')) ?>">
                 <a href="index.php"<?= $lienActif('accueil') ?>><?= e(t('nav.accueil')) ?></a>
-                <a href="metiers.php"<?= $lienActif('metiers') ?>><?= e(t('nav.metiers')) ?></a>
+                <a href="metiers.php"<?= $lienActif('metiers') ?>><?= e(t('nav.decouvrir_metiers')) ?></a>
                 <?php if ($utilisateurEntete): ?>
                     <a href="resultats.php"<?= $lienActif('resultats') ?>><?= e(t('nav.resultats')) ?></a>
                     <a href="profil.php"<?= $lienActif('profil') ?>><?= e(t('nav.profil')) ?></a>

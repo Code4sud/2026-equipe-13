@@ -8,6 +8,7 @@ return [
 
     'nav.accueil' => 'Home',
     'nav.metiers' => 'Careers',
+    'nav.decouvrir_metiers' => 'Discover careers',
     'nav.resultats' => 'My results',
     'nav.profil' => 'My profile',
     'nav.connexion' => 'Log in',
@@ -175,6 +176,9 @@ return [
     'metiers.regenerer' => 'Try generating again',
     'metiers.interets_label' => 'Interests',
     'metiers.joue' => 'Already played',
+    'metiers.journee_titre' => 'A typical day',
+    'metiers.journee_taches' => 'Main tasks',
+    'metiers.journee_note' => 'Source: Centre des Possibles. Indicative day, varies by employer and role.',
     'metiers.non_connecte_titre' => 'Create your account to play',
     'metiers.non_connecte_texte' => 'You can browse careers freely. To start a scenario and save your scores, log in.',
     'metiers.profil_incomplet_titre' => 'Complete your profile',

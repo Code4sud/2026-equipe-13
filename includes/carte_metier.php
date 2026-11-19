@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Affiche une carte métier réutilisée sur l'accueil et la page catalogue.
  * Options : index (string), compact (bool), action (bool), recommande (bool),
- * connecte (bool), deja_joue (bool).
+ * connecte (bool), deja_joue (bool), journee (bool).
  */
 function afficher_carte_metier(array $metier, array $options = []): void
 {
@@ -14,6 +14,14 @@ function afficher_carte_metier(array $metier, array $options = []): void
     $recommande = !empty($options['recommande']);
     $connecte = !empty($options['connecte']);
     $dejaJoue = !empty($options['deja_joue']);
+
+    $journee = null;
+    if (!empty($options['journee'])) {
+        $journeeBrute = journee_type_pour_metier($metier);
+        if ($journeeBrute !== null) {
+            $journee = journee_type_traduite($journeeBrute);
+        }
+    }
 
     $recherche = implode(' ', [
         nom_metier($metier),
@@ -49,6 +57,34 @@ function afficher_carte_metier(array $metier, array $options = []): void
                 <li><?= e(libelle_interet($interet)) ?></li>
             <?php endforeach; ?>
         </ul>
+
+        <?php if ($journee !== null): ?>
+            <details class="journee">
+                <summary>
+                    <span class="journee__resume"><?= e(t('metiers.journee_titre')) ?></span>
+                    <span class="journee__source"><?= e($journee['source']) ?></span>
+                </summary>
+                <div class="journee__corps">
+                    <ol class="journee__phases">
+                        <?php foreach ($journee['phases'] as $phase): ?>
+                            <li class="journee__phase">
+                                <span class="journee__moment"><?= e($phase['moment']) ?></span>
+                                <p><?= e($phase['texte']) ?></p>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                    <div class="journee__taches">
+                        <p class="journee__sous-titre"><?= e(t('metiers.journee_taches')) ?></p>
+                        <ul>
+                            <?php foreach ($journee['taches'] as $tache): ?>
+                                <li><?= e($tache) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <p class="journee__note"><?= e(t('metiers.journee_note')) ?></p>
+                </div>
+            </details>
+        <?php endif; ?>
 
         <div class="carte-metier__bas">
             <?php if (!$action): ?>

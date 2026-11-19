@@ -105,6 +105,7 @@ require __DIR__ . '/includes/entete.php';
                         'connecte' => (bool) $utilisateur,
                         'recommande' => $utilisateur && metier_recommande($metier, $interets),
                         'deja_joue' => in_array((int) $metier['id'], $dejaJoues, true),
+                        'journee' => true,
                     ]); ?>
                 <?php endforeach; ?>
             </div>

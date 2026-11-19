@@ -32,6 +32,7 @@ require_once __DIR__ . '/fonctions.php';
 require_once __DIR__ . '/lang.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/metiers.php';
+require_once __DIR__ . '/journees_types.php';
 require_once __DIR__ . '/carte_metier.php';
 require_once __DIR__ . '/ia.php';
 

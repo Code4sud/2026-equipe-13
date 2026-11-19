@@ -8,6 +8,7 @@ return [
 
     'nav.accueil' => 'Accueil',
     'nav.metiers' => 'Les métiers',
+    'nav.decouvrir_metiers' => 'Découvrir des métiers',
     'nav.resultats' => 'Mes résultats',
     'nav.profil' => 'Mon profil',
     'nav.connexion' => 'Connexion',
@@ -175,6 +176,9 @@ return [
     'metiers.regenerer' => 'Réessayer la génération',
     'metiers.interets_label' => 'Centres d’intérêt',
     'metiers.joue' => 'Déjà joué',
+    'metiers.journee_titre' => 'Journée type',
+    'metiers.journee_taches' => 'Tâches principales',
+    'metiers.journee_note' => 'Source : Centre des Possibles. Journée indicative, variable selon l’employeur et le poste.',
     'metiers.non_connecte_titre' => 'Crée ton compte pour jouer',
     'metiers.non_connecte_texte' => 'Tu peux consulter les métiers librement. Pour lancer une mise en situation et enregistrer tes notes, connecte-toi.',
     'metiers.profil_incomplet_titre' => 'Complète ton profil',
