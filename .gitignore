@@ -5,3 +5,9 @@ dist/
 __pycache__/
 .venv/
 .DS_Store
+
+# Configuration locale (identifiants MySQL + clé API)
+config.php
+
+# Vidéo de démo (à remettre sur clé USB, pas dans le dépôt)
+equipe-*.mp4
