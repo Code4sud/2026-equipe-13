@@ -4,6 +4,7 @@ $titre_page = $titre_page ?? 'FindMyWay2Work';
 $page_active = $page_active ?? '';
 $page_classe = $page_classe ?? '';
 $utilisateurEntete = utilisateur_actuel($pdo);
+$avatarEntete = $utilisateurEntete ? avatar_utilisateur($utilisateurEntete) : null;
 $lienActif = static fn (string $cle): string => $page_active === $cle ? ' aria-current="page"' : '';
 ?>
 <!DOCTYPE html>
@@ -45,8 +46,13 @@ $lienActif = static fn (string $cle): string => $page_active === $cle ? ' aria-c
 
             <div class="entete__compte">
                 <?php if ($utilisateurEntete): ?>
-                    <span class="entete__utilisateur" title="<?= e(t('nav.compte', ['nom' => $utilisateurEntete['prenom'] . ' ' . $utilisateurEntete['nom']])) ?>">
-                        <?= e($utilisateurEntete['prenom']) ?>
+                    <span class="entete__identite">
+                        <?php if ($avatarEntete): ?>
+                            <span class="avatar" style="background: <?= e($avatarEntete['couleur']) ?>" aria-hidden="true"><?= e($avatarEntete['initiales']) ?></span>
+                        <?php endif; ?>
+                        <span class="entete__utilisateur" title="<?= e(t('nav.compte', ['nom' => $utilisateurEntete['prenom'] . ' ' . $utilisateurEntete['nom']])) ?>">
+                            <?= e($utilisateurEntete['prenom']) ?>
+                        </span>
                     </span>
                     <form method="post" action="deconnexion.php" class="entete__formulaire">
                         <?= csrf_field() ?>

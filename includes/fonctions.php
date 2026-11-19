@@ -99,6 +99,33 @@ function url_langue(string $code): string
     return $chemin . '?' . http_build_query($parametres);
 }
 
+/** Avatar par défaut : initiales et couleur déterministe. */
+function avatar_utilisateur(array $utilisateur): array
+{
+    $prenom = trim((string) ($utilisateur['prenom'] ?? ''));
+    $nom = trim((string) ($utilisateur['nom'] ?? ''));
+
+    $initiales = '';
+    if ($prenom !== '') {
+        $initiales .= mb_substr($prenom, 0, 1);
+    }
+    if ($nom !== '') {
+        $initiales .= mb_substr($nom, 0, 1);
+    }
+    $initiales = mb_strtoupper($initiales);
+    if ($initiales === '') {
+        $initiales = '?';
+    }
+
+    $couleurs = ['#FF2E97', '#00E0FF', '#EDE6FF', '#C9B8FF'];
+    $graine = abs(crc32(mb_strtolower($prenom . '|' . $nom)));
+
+    return [
+        'initiales' => $initiales,
+        'couleur' => $couleurs[$graine % count($couleurs)],
+    ];
+}
+
 /** Formate une note avec la virgule française ou le point anglais. */
 function format_note(float $note, string $langue): string
 {

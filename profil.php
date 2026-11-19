@@ -3,6 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 
 $utilisateur = exiger_connexion($pdo);
+$avatar = avatar_utilisateur($utilisateur);
 $interetsActuels = interets_utilisateur($pdo, (int) $utilisateur['id']);
 
 $sociabilites = ['timide', 'normal', 'avenant'];
@@ -186,9 +187,14 @@ require __DIR__ . '/includes/entete.php';
                 <div class="panneau">
                     <p class="kicker"><?= e(t('profil.compte_titre')) ?></p>
                     <p class="champ__aide"><?= e(t('profil.compte_texte')) ?></p>
+                    <div class="compte-profil">
+                        <span class="avatar avatar--grand" style="background: <?= e($avatar['couleur']) ?>" aria-hidden="true"><?= e($avatar['initiales']) ?></span>
+                        <div>
+                            <p class="compte-profil__nom"><?= e($utilisateur['prenom'] . ' ' . $utilisateur['nom']) ?></p>
+                            <p class="compte-profil__email"><?= e($utilisateur['email']) ?></p>
+                        </div>
+                    </div>
                     <dl class="fiche">
-                        <div><dt><?= e(t('profil.compte_nom')) ?></dt><dd><?= e($utilisateur['prenom'] . ' ' . $utilisateur['nom']) ?></dd></div>
-                        <div><dt><?= e(t('profil.compte_email')) ?></dt><dd><?= e($utilisateur['email']) ?></dd></div>
                         <div><dt><?= e(t('profil.compte_age')) ?></dt><dd><?= (int) $utilisateur['age'] ?> <?= e(t('inscription.ans')) ?></dd></div>
                     </dl>
                     <a class="btn btn--petit btn--cyan" href="metiers.php"><?= e(t('resultats.cta')) ?></a>

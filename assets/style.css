@@ -391,6 +391,13 @@ ol {
     flex: 0 0 auto;
 }
 
+.entete__identite {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
 .entete__utilisateur {
     color: var(--blanc);
     font-weight: 800;
@@ -399,6 +406,29 @@ ol {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    border: 2px solid var(--abysse);
+    box-shadow: 2px 2px 0 var(--abysse);
+    color: var(--abysse);
+    font-family: var(--titre);
+    font-size: 0.72rem;
+    line-height: 1;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.avatar--grand {
+    width: 54px;
+    height: 54px;
+    font-size: 1.05rem;
+    box-shadow: 3px 3px 0 var(--abysse);
 }
 
 .entete__formulaire {
@@ -1475,6 +1505,27 @@ input[type='range']::-moz-range-track {
     gap: 24px;
     position: sticky;
     top: 110px;
+}
+
+.compte-profil {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 18px 0 4px;
+}
+
+.compte-profil__nom {
+    font-family: var(--titre);
+    font-size: 1.05rem;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.compte-profil__email {
+    margin-top: 4px;
+    font-size: 0.82rem;
+    color: var(--encre-douce);
+    overflow-wrap: anywhere;
 }
 
 .fiche {
