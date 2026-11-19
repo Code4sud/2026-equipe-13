@@ -20,6 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('erreur', t('erreur.profil_incomplet'));
             redirect('profil.php');
         }
+        if (trim((string) ($config['deepseek']['cle_api'] ?? '')) === '') {
+            flash('erreur', t('erreur.cle_api_absente'));
+            redirect('metiers.php');
+        }
 
         $notifications = generer_notifications_ia($config, $metier);
         if ($notifications === null) {
