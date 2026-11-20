@@ -300,9 +300,19 @@
 
     /* Chargement pendant la préparation d'une partie ---------------------- */
     const voileChargement = $('[data-chargement]');
+    const reinitialiserEnvois = [];
 
     $$('form[data-chargement-jeu]').forEach((formulaire) => {
         let envoiEnCours = false;
+        const bouton = formulaire.querySelector('button[type="submit"]');
+
+        reinitialiserEnvois.push(() => {
+            envoiEnCours = false;
+            if (bouton) {
+                bouton.disabled = false;
+                bouton.removeAttribute('aria-busy');
+            }
+        });
 
         formulaire.addEventListener('submit', (evenement) => {
             if (envoiEnCours) {
@@ -311,7 +321,6 @@
             }
             envoiEnCours = true;
 
-            const bouton = formulaire.querySelector('button[type="submit"]');
             if (bouton) {
                 bouton.disabled = true;
                 bouton.setAttribute('aria-busy', 'true');
@@ -322,6 +331,15 @@
             document.body.classList.add('est-chargement');
             voileChargement.focus();
         });
+    });
+
+    /* Retour arrière depuis le cache : la page doit redevenir utilisable,
+       sinon le voile de chargement et les boutons désactivés restent bloqués. */
+    window.addEventListener('pageshow', (evenement) => {
+        if (!evenement.persisted) return;
+        reinitialiserEnvois.forEach((reinitialiser) => reinitialiser());
+        if (voileChargement) voileChargement.hidden = true;
+        document.body.classList.remove('est-chargement');
     });
 
     /* Confirmation des actions destructrices ------------------------------- */

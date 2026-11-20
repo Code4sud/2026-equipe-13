@@ -149,6 +149,7 @@ return [
     'profil.attente_passion_detail' => 'Faire quelque chose qui me plaît',
     'profil.enregistrer' => 'Enregistrer mon profil',
     'profil.succes' => 'Profil mis à jour. Tes résultats ont été recalculés.',
+    'profil.partie_attente' => 'Partie en attente : :metier. Choisis au moins un centre d’intérêt puis enregistre ton profil : la partie se lancera toute seule.',
     'profil.compte_titre' => 'Ton compte',
     'profil.compte_texte' => 'Ces informations servent à te connecter et à personnaliser le site.',
     'profil.compte_age' => 'Âge',

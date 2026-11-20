@@ -149,6 +149,7 @@ return [
     'profil.attente_passion_detail' => 'Do something I love',
     'profil.enregistrer' => 'Save my profile',
     'profil.succes' => 'Profile updated. Your results have been recalculated.',
+    'profil.partie_attente' => 'Game pending: :metier. Choose at least one interest and save your profile: the game will start right away.',
     'profil.compte_titre' => 'Your account',
     'profil.compte_texte' => 'This information is used to log you in and personalise the site.',
     'profil.compte_age' => 'Age',

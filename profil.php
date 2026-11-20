@@ -9,6 +9,17 @@ $interetsActuels = interets_utilisateur($pdo, (int) $utilisateur['id']);
 $sociabilites = ['timide', 'normal', 'avenant'];
 $attentes = ['financier', 'entre_deux', 'passion'];
 
+// Métier demandé avant le passage obligé par le profil : la partie reprendra
+// automatiquement dès que le profil contiendra un centre d'intérêt.
+$metierEnAttente = (int) ($_POST['metier'] ?? $_GET['metier'] ?? 0);
+$metierAttendu = null;
+if ($metierEnAttente > 0) {
+    $metierAttendu = charger_metier($pdo, $metierEnAttente);
+    if ($metierAttendu === null) {
+        $metierEnAttente = 0;
+    }
+}
+
 $erreurs = [];
 $valeurs = [
     'interets' => $interetsActuels,
@@ -82,6 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
             flash('succes', t('profil.succes'));
+            if ($metierEnAttente > 0) {
+                redirect('jeu.php?metier=' . $metierEnAttente);
+            }
             redirect('profil.php');
         } catch (Throwable $exception) {
             if ($pdo->inTransaction()) {
@@ -116,10 +130,19 @@ require __DIR__ . '/includes/entete.php';
             </div>
         <?php endif; ?>
 
+        <?php if ($metierAttendu !== null): ?>
+            <div class="alerte" role="status">
+                <p><?= e(t('profil.partie_attente', ['metier' => nom_metier($metierAttendu)])) ?></p>
+            </div>
+        <?php endif; ?>
+
         <div class="profil-grille">
-            <form method="post" action="profil.php" class="formulaire formulaire--profil">
+            <form method="post" action="profil.php" class="formulaire formulaire--profil"<?= $metierEnAttente > 0 ? ' data-chargement-jeu' : '' ?>>
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="profil">
+                <?php if ($metierEnAttente > 0): ?>
+                    <input type="hidden" name="metier" value="<?= $metierEnAttente ?>">
+                <?php endif; ?>
 
                 <fieldset class="panneau panneau--fieldset">
                     <legend>

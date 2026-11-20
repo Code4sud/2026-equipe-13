@@ -5,86 +5,120 @@ require __DIR__ . '/includes/bootstrap.php';
 $utilisateur = exiger_connexion($pdo);
 $utilisateurId = (int) $utilisateur['id'];
 
+/**
+ * Génère les notifications IA puis enregistre la partie, en remplaçant
+ * toute partie abandonnée de l'utilisateur.
+ * Renvoie l'identifiant de la nouvelle partie, ou null si la génération échoue.
+ */
+function demarrer_partie(PDO $pdo, array $config, int $utilisateurId, array $metier): ?int
+{
+    $notifications = generer_notifications_ia($config, $metier);
+    if ($notifications === null) {
+        return null;
+    }
+
+    $total = count($notifications);
+    $indices = range(0, $total - 1);
+    if ($total > 1) {
+        $ordreAttendu = $indices;
+        $essais = 0;
+        do {
+            shuffle($indices);
+            $essais++;
+        } while ($indices === $ordreAttendu && $essais < 20);
+
+        if ($indices === $ordreAttendu) {
+            $indices[] = array_shift($indices);
+        }
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        // Une nouvelle partie remplace toute partie abandonnée de l'utilisateur.
+        $suppression = $pdo->prepare('DELETE FROM parties WHERE utilisateur_id = ?');
+        $suppression->execute([$utilisateurId]);
+
+        $creation = $pdo->prepare('INSERT INTO parties (utilisateur_id, metier_id) VALUES (?, ?)');
+        $creation->execute([$utilisateurId, (int) $metier['id']]);
+        $nouvellePartie = (int) $pdo->lastInsertId();
+
+        $insertion = $pdo->prepare(
+            'INSERT INTO partie_notifications
+             (partie_id, source_fr, source_en, texte_fr, texte_en, position_attendue, ordre_affichage)
+             VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+        foreach ($indices as $affichage => $indexOriginal) {
+            $notification = $notifications[$indexOriginal];
+            $insertion->execute([
+                $nouvellePartie,
+                $notification['source_fr'],
+                $notification['source_en'],
+                $notification['texte_fr'],
+                $notification['texte_en'],
+                $indexOriginal + 1,
+                $affichage + 1,
+            ]);
+        }
+
+        $pdo->commit();
+        return $nouvellePartie;
+    } catch (Throwable $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        error_log('FindMyWay2Work : création de partie impossible — ' . $exception->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Vérifie les prérequis d'une partie et redirige vers l'étape manquante.
+ * Un profil sans centre d'intérêt renvoie vers le profil en mémorisant le
+ * métier voulu (?metier=…), pour que la partie démarre juste après.
+ */
+function preparer_partie(PDO $pdo, array $config, int $utilisateurId, int $metierId): array
+{
+    $metier = charger_metier($pdo, $metierId);
+    if (!$metier) {
+        flash('erreur', t('erreur.metier_introuvable'));
+        redirect('metiers.php');
+    }
+
+    if (trim((string) ($config['deepseek']['cle_api'] ?? '')) === '') {
+        flash('erreur', t('erreur.cle_api_absente'));
+        redirect('metiers.php');
+    }
+
+    if (!interets_utilisateur($pdo, $utilisateurId)) {
+        flash('erreur', t('erreur.profil_incomplet'));
+        redirect('profil.php?metier=' . (int) $metier['id']);
+    }
+
+    return $metier;
+}
+
+/** Lance la partie demandée puis redirige vers le jeu. */
+function lancer_partie(PDO $pdo, array $config, int $utilisateurId, int $metierId): never
+{
+    $metier = preparer_partie($pdo, $config, $utilisateurId, $metierId);
+
+    $nouvellePartie = demarrer_partie($pdo, $config, $utilisateurId, $metier);
+    if ($nouvellePartie === null) {
+        flash('erreur', t('erreur.generation_notifications'));
+        redirect('metiers.php');
+    }
+
+    redirect('jeu.php?partie=' . $nouvellePartie);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $action = (string) ($_POST['action'] ?? 'demarrer');
     $partieId = (int) ($_POST['partie'] ?? 0);
 
     if ($action === 'demarrer') {
-        $metier = charger_metier($pdo, (int) ($_POST['metier'] ?? 0));
-        if (!$metier) {
-            flash('erreur', t('erreur.metier_introuvable'));
-            redirect('metiers.php');
-        }
-        if (!interets_utilisateur($pdo, $utilisateurId)) {
-            flash('erreur', t('erreur.profil_incomplet'));
-            redirect('profil.php');
-        }
-        if (trim((string) ($config['deepseek']['cle_api'] ?? '')) === '') {
-            flash('erreur', t('erreur.cle_api_absente'));
-            redirect('metiers.php');
-        }
-
-        $notifications = generer_notifications_ia($config, $metier);
-        if ($notifications === null) {
-            flash('erreur', t('erreur.generation_notifications'));
-            redirect('metiers.php');
-        }
-
-        $total = count($notifications);
-        $indices = range(0, $total - 1);
-        if ($total > 1) {
-            $ordreAttendu = $indices;
-            $essais = 0;
-            do {
-                shuffle($indices);
-                $essais++;
-            } while ($indices === $ordreAttendu && $essais < 20);
-
-            if ($indices === $ordreAttendu) {
-                $indices[] = array_shift($indices);
-            }
-        }
-
-        try {
-            $pdo->beginTransaction();
-
-            // Une nouvelle partie remplace toute partie abandonnée de l'utilisateur.
-            $suppression = $pdo->prepare('DELETE FROM parties WHERE utilisateur_id = ?');
-            $suppression->execute([$utilisateurId]);
-
-            $creation = $pdo->prepare('INSERT INTO parties (utilisateur_id, metier_id) VALUES (?, ?)');
-            $creation->execute([$utilisateurId, (int) $metier['id']]);
-            $nouvellePartie = (int) $pdo->lastInsertId();
-
-            $insertion = $pdo->prepare(
-                'INSERT INTO partie_notifications
-                 (partie_id, source_fr, source_en, texte_fr, texte_en, position_attendue, ordre_affichage)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)'
-            );
-            foreach ($indices as $affichage => $indexOriginal) {
-                $notification = $notifications[$indexOriginal];
-                $insertion->execute([
-                    $nouvellePartie,
-                    $notification['source_fr'],
-                    $notification['source_en'],
-                    $notification['texte_fr'],
-                    $notification['texte_en'],
-                    $indexOriginal + 1,
-                    $affichage + 1,
-                ]);
-            }
-
-            $pdo->commit();
-            redirect('jeu.php?partie=' . $nouvellePartie);
-        } catch (Throwable $exception) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
-            error_log('FindMyWay2Work : création de partie impossible — ' . $exception->getMessage());
-            flash('erreur', t('erreur.generation_notifications'));
-            redirect('metiers.php');
-        }
+        lancer_partie($pdo, $config, $utilisateurId, (int) ($_POST['metier'] ?? 0));
     }
 
     $partie = $partieId > 0 ? charger_partie($pdo, $partieId, $utilisateurId) : null;
@@ -188,6 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     redirect('metiers.php');
+}
+
+// Le profil vient d'être complété (ou le métier est demandé via l'URL) :
+// la partie mémorisée démarre directement.
+$metierDemande = (int) ($_GET['metier'] ?? 0);
+if ($metierDemande > 0) {
+    lancer_partie($pdo, $config, $utilisateurId, $metierDemande);
 }
 
 $partieId = (int) ($_GET['partie'] ?? 0);
