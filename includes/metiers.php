@@ -173,50 +173,10 @@ function calculer_note_reussite(array $positionsAttendues, array $ordreUtilisate
     return round(max(0.0, min(10.0, $note)), 1);
 }
 
-/** Bonus lié au revenu caché du métier. */
-function bonus_revenu(string $revenu, string $attente): float
-{
-    $table = [
-        'financier' => ['faible' => 0.0, 'moyen' => 1.0, 'eleve' => 2.0],
-        'entre_deux' => ['faible' => 0.0, 'moyen' => 1.0, 'eleve' => 1.0],
-        'passion' => ['faible' => 0.0, 'moyen' => 0.5, 'eleve' => 0.5],
-    ];
-    return $table[$attente][$revenu] ?? 0.0;
-}
-
-/** Bonus ou malus lié à la correspondance profil / contact social. */
-function bonus_sociabilite(string $sociabilite, string $contact): float
-{
-    if (($sociabilite === 'timide' && $contact === 'faible')
-        || ($sociabilite === 'normal' && $contact === 'moyen')
-        || ($sociabilite === 'avenant' && $contact === 'eleve')) {
-        return 1.0;
-    }
-    if (($sociabilite === 'timide' && $contact === 'eleve')
-        || ($sociabilite === 'avenant' && $contact === 'faible')) {
-        return -1.0;
-    }
-    return 0.0;
-}
-
-/** Note finale d'un métier joué, recalculée à chaque affichage. */
-function note_finale_metier(array $resultat, array $utilisateur): float
-{
-    $reussite = (float) $resultat['note_reussite'];
-    $appreciation = (float) $resultat['note_appreciation'];
-
-    $moyenne = match ($utilisateur['attente']) {
-        'financier' => (2 * $reussite + 0.5 * $appreciation) / 2.5,
-        'passion' => ($reussite + 2 * $appreciation) / 3,
-        default => ($reussite + $appreciation) / 2,
-    };
-
-    return $moyenne
-        + bonus_revenu($resultat['revenu'], $utilisateur['attente'])
-        + bonus_sociabilite($utilisateur['sociabilite'], $resultat['contact_social']);
-}
-
-/** Résultats de l'utilisateur, enrichis et triés par note finale. */
+/**
+ * Résultats de l'utilisateur, triés uniquement par la note qu'il a lui-même
+ * donnée. La note de réussite reste interne et n'influence jamais le classement.
+ */
 function classement_utilisateur(PDO $pdo, array $utilisateur): array
 {
     $requete = $pdo->prepare(
@@ -229,17 +189,11 @@ function classement_utilisateur(PDO $pdo, array $utilisateur): array
     $requete->execute([(int) $utilisateur['id']]);
     $resultats = $requete->fetchAll();
 
-    foreach ($resultats as &$resultat) {
-        $resultat['note_finale'] = note_finale_metier($resultat, $utilisateur);
-    }
-    unset($resultat);
-
     usort($resultats, static function (array $a, array $b): int {
-        if ($a['note_finale'] !== $b['note_finale']) {
-            return $b['note_finale'] <=> $a['note_finale'];
-        }
-        if ($a['note_appreciation'] !== $b['note_appreciation']) {
-            return $b['note_appreciation'] <=> $a['note_appreciation'];
+        $noteA = (float) $a['note_appreciation'];
+        $noteB = (float) $b['note_appreciation'];
+        if ($noteA !== $noteB) {
+            return $noteB <=> $noteA;
         }
         return strcoll(nom_metier($a), nom_metier($b));
     });

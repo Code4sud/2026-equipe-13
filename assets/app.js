@@ -298,6 +298,32 @@
         });
     });
 
+    /* Chargement pendant la préparation d'une partie ---------------------- */
+    const voileChargement = $('[data-chargement]');
+
+    $$('form[data-chargement-jeu]').forEach((formulaire) => {
+        let envoiEnCours = false;
+
+        formulaire.addEventListener('submit', (evenement) => {
+            if (envoiEnCours) {
+                evenement.preventDefault();
+                return;
+            }
+            envoiEnCours = true;
+
+            const bouton = formulaire.querySelector('button[type="submit"]');
+            if (bouton) {
+                bouton.disabled = true;
+                bouton.setAttribute('aria-busy', 'true');
+            }
+
+            if (!voileChargement) return;
+            voileChargement.hidden = false;
+            document.body.classList.add('est-chargement');
+            voileChargement.focus();
+        });
+    });
+
     /* Confirmation des actions destructrices ------------------------------- */
     $$('form[data-confirmer]').forEach((formulaire) => {
         formulaire.addEventListener('submit', (evenement) => {

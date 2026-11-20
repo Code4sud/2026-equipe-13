@@ -56,13 +56,8 @@ require __DIR__ . '/includes/entete.php';
                             <p class="carte-resultat__kicker"><?= e(t('resultats.rang', ['rang' => $rang + 1])) ?> · <?= e(corps_metier($resultat)) ?></p>
                             <h3 class="carte-resultat__nom"><?= e(nom_metier($resultat)) ?></h3>
                             <dl class="carte-resultat__notes">
-                                <div><dt><?= e(t('resultats.reussite')) ?></dt><dd><?= e(format_note((float) $resultat['note_reussite'], $langue)) ?>/10</dd></div>
                                 <div><dt><?= e(t('resultats.appreciation')) ?></dt><dd><?= e(format_note((float) $resultat['note_appreciation'], $langue)) ?>/10</dd></div>
                             </dl>
-                        </div>
-                        <div class="carte-resultat__finale">
-                            <span><?= e(t('resultats.note_finale')) ?></span>
-                            <strong><?= e(format_note((float) $resultat['note_finale'], $langue)) ?></strong>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -80,7 +75,6 @@ require __DIR__ . '/includes/entete.php';
                             <h3 class="carte-resultat__nom"><?= e(nom_metier($resultat)) ?></h3>
                         </div>
                         <dl class="carte-resultat__notes">
-                            <div><dt><?= e(t('resultats.reussite')) ?></dt><dd><?= e(format_note((float) $resultat['note_reussite'], $langue)) ?>/10</dd></div>
                             <div><dt><?= e(t('resultats.appreciation')) ?></dt><dd><?= e(format_note((float) $resultat['note_appreciation'], $langue)) ?>/10</dd></div>
                         </dl>
                     </article>

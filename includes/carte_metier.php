@@ -90,7 +90,7 @@ function afficher_carte_metier(array $metier, array $options = []): void
             <?php if (!$action): ?>
                 <a class="carte-metier__lien" href="metiers.php"><?= e(t('nav.metiers')) ?> →</a>
             <?php elseif ($connecte): ?>
-                <form method="post" action="jeu.php" class="carte-metier__formulaire">
+                <form method="post" action="jeu.php" class="carte-metier__formulaire" data-chargement-jeu>
                     <?= csrf_field() ?>
                     <input type="hidden" name="metier" value="<?= (int) $metier['id'] ?>">
                     <button type="submit" class="btn btn--petit">

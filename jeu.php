@@ -274,6 +274,7 @@ require __DIR__ . '/includes/entete.php';
                     <?php if (!$classementValide): ?>
                         <div class="telephone__consigne">
                             <p><?= e(t('jeu.consigne')) ?></p>
+                            <p class="telephone__criteres"><?= e(t('jeu.criteres')) ?></p>
                             <p class="telephone__aide"><?= e(t('jeu.aide')) ?></p>
                         </div>
 
@@ -310,10 +311,8 @@ require __DIR__ . '/includes/entete.php';
                         </form>
                     <?php else: ?>
                         <div class="resultat-partie">
-                            <p class="kicker kicker--clair"><?= e(t('jeu.reussite_titre')) ?></p>
-                            <p class="resultat-partie__note"><?= e(format_note((float) $partie['note_reussite'], $langue)) ?><span>/ 10</span></p>
-                            <p class="resultat-partie__label"><?= e(t('jeu.reussite_label')) ?></p>
-                            <p class="resultat-partie__texte"><?= e(t('jeu.reussite_texte')) ?></p>
+                            <p class="kicker kicker--clair"><?= e(t('jeu.classement_titre')) ?></p>
+                            <p class="resultat-partie__texte"><?= e(t('jeu.classement_texte')) ?></p>
                         </div>
 
                         <form method="post" action="jeu.php" class="jeu-formulaire jeu-formulaire--avis">

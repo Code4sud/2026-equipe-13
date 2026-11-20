@@ -22,9 +22,9 @@ php -S 127.0.0.1:8000
 - profil modifiable : 15 centres d’intérêt, sociabilité, attente vis-à-vis du travail ;
 - catalogue de 15 métiers réalistes, recherche et filtre par corps de métier ;
 - recommandations automatiques dès qu’un métier partage un centre d’intérêt avec le profil ;
-- jeu de mise en situation : 10 à 15 notifications générées par l’IA à chaque partie, classement à la souris ou au doigt ;
-- note de réussite calculée par le code, puis note d’appréciation ;
-- top 5 recalculé à chaque affichage avec les bonus revenu et sociabilité ;
+- jeu de mise en situation : 10 à 15 notifications contextuelles (1 à 2 phrases) générées par l’IA à chaque partie, à classer par priorité à la souris ou au doigt ;
+- note d’appréciation donnée par le joueur, seule note affichée ;
+- top 5 classé uniquement selon la note donnée par le joueur ;
 - interface entièrement bilingue FR / EN, y compris en pleine partie ;
 - responsive téléphone, tablette et ordinateur (le jeu occupe tout l’écran sur téléphone) ;
 - CGU, politique de confidentialité et suppression complète du compte.
@@ -81,9 +81,9 @@ Puis ouvrir `http://127.0.0.1:8000`.
 L’API DeepSeek sert uniquement à :
 
 1. générer les 15 métiers (nom, corps de métier, description, intérêts, revenu et contact social cachés) en français et en anglais ;
-2. générer les 10 à 15 notifications d’une partie, avec leur ordre de priorité attendu, en français et en anglais.
+2. générer les 10 à 15 notifications d’une partie, avec leur ordre de priorité attendu, en français et en anglais. Chaque notification est un mini-scénario de 1 à 2 phrases, avec assez de contexte pour être classé par priorité et importance.
 
-**Aucune donnée utilisateur n’est envoyée à l’API.** Les prompts ne contiennent que le contexte du jeu et les informations du métier. Le calcul des notes, des bonus, du top 5, des recommandations et la traduction de l’interface sont exclusivement gérés par le code.
+**Aucune donnée utilisateur n’est envoyée à l’API.** Les prompts ne contiennent que le contexte du jeu et les informations du métier. Le calcul des notes, le classement, les recommandations et la traduction de l’interface sont exclusivement gérés par le code.
 
 ## Calcul des notes
 
@@ -91,11 +91,7 @@ L’API DeepSeek sert uniquement à :
 - pire écart `Dmax = ⌊n² / 2⌋` (50 pour 10 notifications, 112 pour 15) ;
 - réussite `R = 10 × (1 − D / Dmax)`, arrondie à 0,1.
 
-La note finale d’un métier combine ensuite :
-
-- la moyenne pondérée de `R` et de l’appréciation `A` selon l’attente du profil ;
-- un bonus de revenu (0, 0,5, 1 ou 2) ;
-- un bonus ou malus de sociabilité (−1, 0 ou +1).
+La note de réussite `R` reste **interne** : elle sert uniquement à mesurer le classement et n’est jamais affichée au joueur. Le top 5 est classé uniquement selon la note d’appréciation `A` que le joueur a lui-même donnée à chaque métier.
 
 ## Structure
 

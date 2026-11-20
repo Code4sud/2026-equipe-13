@@ -43,6 +43,21 @@ $utilisateurPied = utilisateur_actuel($pdo);
     </div>
 </footer>
 
-<script src="assets/app.js" defer></script>
+<div class="chargement" data-chargement tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="chargement-titre" aria-describedby="chargement-texte" hidden>
+    <div class="chargement__boite">
+        <p class="chargement__kicker"><?= e(t('chargement.kicker')) ?></p>
+        <div class="chargement__visuel" aria-hidden="true">
+            <span class="chargement__anneau"></span>
+            <span class="chargement__logo">F<span>2</span>W</span>
+        </div>
+        <p class="chargement__titre" id="chargement-titre"><?= e(t('chargement.titre')) ?></p>
+        <p class="chargement__texte" id="chargement-texte"><?= e(t('chargement.texte')) ?></p>
+        <div class="chargement__barre" aria-hidden="true"><span></span></div>
+        <p class="chargement__astuce"><?= e(t('chargement.astuce')) ?></p>
+        <p class="sr-only" role="status"><?= e(t('chargement.statut')) ?></p>
+    </div>
+</div>
+
+<script src="assets/app.js?v=<?= (int) @filemtime(__DIR__ . '/../assets/app.js') ?>" defer></script>
 </body>
 </html>

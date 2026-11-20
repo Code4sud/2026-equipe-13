@@ -1841,6 +1841,13 @@ input[type='range']::-moz-range-track {
     color: var(--blanc);
 }
 
+.telephone__criteres {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-top: 5px;
+}
+
 .telephone__aide {
     font-size: 0.76rem !important;
     font-weight: 500 !important;
@@ -1981,28 +1988,6 @@ input[type='range']::-moz-range-track {
     color: var(--blanc);
 }
 
-.resultat-partie__note {
-    font-family: var(--titre);
-    font-size: 4rem;
-    line-height: 0.9;
-    color: var(--cyan);
-    margin: 8px 0 4px;
-}
-
-.resultat-partie__note span {
-    font-size: 1.1rem;
-    color: var(--lilas);
-    margin-left: 6px;
-}
-
-.resultat-partie__label {
-    font-size: 0.72rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--lilas);
-}
-
 .resultat-partie__texte {
     font-size: 0.8rem;
     margin-top: 10px;
@@ -2099,7 +2084,7 @@ input[type='range']::-moz-range-track {
 
 .carte-resultat {
     display: grid;
-    grid-template-columns: 88px minmax(0, 1fr) auto;
+    grid-template-columns: 88px minmax(0, 1fr);
     gap: 22px;
     align-items: center;
     background: var(--blanc);
@@ -2172,36 +2157,8 @@ input[type='range']::-moz-range-track {
     font-size: 0.9rem;
 }
 
-.carte-resultat__finale {
-    text-align: right;
-    border-left: var(--bord);
-    padding-left: 20px;
-    min-width: 110px;
-}
-
-.carte-resultat__finale span {
-    display: block;
-    font-size: 0.64rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--encre-douce);
-}
-
-.carte-resultat__finale strong {
-    display: block;
-    font-family: var(--titre);
-    font-size: 2rem;
-    line-height: 1;
-    margin-top: 3px;
-}
-
 .carte-resultat--simple {
-    grid-template-columns: minmax(0, 1fr) auto;
-}
-
-.carte-resultat--simple .carte-resultat__notes {
-    justify-content: flex-end;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .liste-joues {
@@ -2263,6 +2220,143 @@ input[type='range']::-moz-range-track {
 
 .contenu-legal__section p:last-child {
     margin-bottom: 0;
+}
+
+/* Chargement (génération IA) --------------------------------------------- */
+
+body.est-chargement {
+    overflow: hidden;
+}
+
+.chargement {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(18, 7, 42, 0.9);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    animation: chargement-apparition 0.18s ease-out;
+}
+
+.chargement:focus {
+    outline: none;
+}
+
+.chargement__boite {
+    width: min(430px, 100%);
+    background: var(--violet);
+    color: var(--blanc);
+    border: 4px solid var(--abysse);
+    border-radius: 18px;
+    box-shadow: 8px 8px 0 var(--abysse);
+    padding: 30px 28px 26px;
+    text-align: center;
+}
+
+.chargement__kicker {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--abysse);
+    background: var(--cyan);
+    border: 2px solid var(--abysse);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 20px;
+}
+
+.chargement__visuel {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 22px;
+    display: grid;
+    place-items: center;
+}
+
+.chargement__anneau {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 5px solid rgba(237, 230, 255, 0.22);
+    border-top-color: var(--cyan);
+    border-right-color: var(--magenta);
+    animation: chargement-rotation 0.9s linear infinite;
+}
+
+.chargement__logo {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--lilas);
+    border: 3px solid var(--abysse);
+    box-shadow: 3px 3px 0 var(--abysse);
+    font-family: var(--titre);
+    font-size: 1rem;
+    letter-spacing: -0.05em;
+    color: var(--abysse);
+}
+
+.chargement__logo span {
+    color: var(--magenta);
+}
+
+.chargement__titre {
+    font-family: var(--titre);
+    font-size: 1.2rem;
+    line-height: 1.02;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.chargement__texte {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.chargement__barre {
+    height: 10px;
+    margin: 20px 0 14px;
+    background: rgba(18, 7, 42, 0.45);
+    border: 2px solid var(--abysse);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.chargement__barre span {
+    display: block;
+    width: 38%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    animation: chargement-defile 1.15s ease-in-out infinite;
+}
+
+.chargement__astuce {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(237, 230, 255, 0.8);
+}
+
+@keyframes chargement-apparition {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes chargement-rotation {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes chargement-defile {
+    from { transform: translateX(-120%); }
+    to { transform: translateX(300%); }
 }
 
 /* Pied de page ------------------------------------------------------------ */
@@ -2697,24 +2791,8 @@ input[type='range']::-moz-range-track {
         font-size: 1.8rem;
     }
 
-    .carte-resultat__finale {
-        grid-column: 1 / -1;
-        border-left: 0;
-        border-top: var(--bord);
-        padding: 10px 0 0;
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        min-width: 0;
-    }
-
     .carte-resultat--simple {
         grid-template-columns: minmax(0, 1fr);
-    }
-
-    .carte-resultat--simple .carte-resultat__notes {
-        justify-content: flex-start;
     }
 
     .telephone__titre {
@@ -2783,5 +2861,14 @@ input[type='range']::-moz-range-track {
     *::after {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
+    }
+
+    .chargement__anneau,
+    .chargement__barre span {
+        animation: none;
+    }
+
+    .chargement__barre span {
+        width: 100%;
     }
 }

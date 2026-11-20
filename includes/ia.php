@@ -293,6 +293,10 @@ function valider_notifications_ia(?array $donnees): ?array
         if (mb_strlen($sourceFr) > 140 || mb_strlen($sourceEn) > 140) {
             return null;
         }
+        if (mb_strlen($texteFr) < 30 || mb_strlen($texteEn) < 30
+            || mb_strlen($texteFr) > 360 || mb_strlen($texteEn) > 360) {
+            return null;
+        }
 
         $cle = mb_strtolower($texteFr);
         if (isset($dejaVu[$cle])) {
@@ -317,23 +321,31 @@ function valider_notifications_ia(?array $donnees): ?array
  */
 function generer_notifications_ia(array $config, array $metier): ?array
 {
-    $prompt = "Contexte : dans un jeu d'orientation, le joueur découvre un métier. Au lancement d'une partie, il reçoit entre 10 et 15 notifications qui tombent en même temps, comme dans une vraie journée de travail. Il doit les classer de la plus urgente à la moins urgente. Les notifications doivent être concrètes, crédibles et variées : urgence, client, sécurité, délai, collègue, qualité, matériel, etc. Chaque priorité doit pouvoir se justifier.\n\n"
+    $prompt = "Contexte : dans un jeu d'orientation, le joueur découvre un métier en vivant une journée type. Au lancement de la partie, il reçoit entre 10 et 15 notifications qui tombent en même temps. Sa mission est de les classer de la plus prioritaire à la moins prioritaire.\n\n"
+        . "Objectif du jeu : classer par priorité et importance. La priorité combine l'urgence (sécurité, délai, tâche bloquante) et l'importance (impact sur les personnes, les clients, la qualité ou le coût). Chaque notification doit donc apporter assez de contexte pour que le joueur puisse la comparer aux autres et justifier sa place.\n\n"
         . "Métier : " . $metier['nom_fr'] . ' (' . $metier['nom_en'] . ")\n"
         . "Corps de métier : " . $metier['corps_fr'] . "\n"
         . 'Description : ' . $metier['description_fr'] . "\n\n"
-        . "Génère entre 10 et 15 notifications. Choisis toi-même le nombre. Classe-les dans l'ordre de priorité attendu : la première est la plus urgente.\n"
-        . "Chaque notification possède une source courte (qui ou quoi l'envoie : « Réception », « Atelier », « Client », « Manager », « Machine »…), et un message court (160 caractères maximum) en français et en anglais. Les deux langues doivent dire exactement la même chose et occuper la même place dans l'ordre.\n\n"
+        . "Règles de génération :\n"
+        . "- génère entre 10 et 15 notifications, toutes différentes et propres à ce métier ;\n"
+        . "- chaque notification est un mini-scénario concret et autonome de 1 à 2 phrases (30 à 360 caractères) : on doit comprendre qui est concerné, ce qui se passe, depuis quand ou dans quel délai, et ce qui est en jeu ;\n"
+        . "- une notification ne doit jamais être une simple étiquette ni une phrase vague du type « Le client attend » : ajoute toujours le contexte qui permet de juger la priorité ;\n"
+        . "- varie les sources et les situations : sécurité, client mécontent, délai serré, collègue en difficulté, machine bloquée, erreur de qualité, matériel manquant, demande du manager, etc. ;\n"
+        . "- crée une vraie gradation : la 1re notification est clairement la plus prioritaire, la dernière clairement la moins prioritaire. L'ordre attendu doit être justifiable sans ambiguïté ;\n"
+        . "- chaque notification possède une source courte (qui ou quoi l'envoie : « Réception », « Atelier », « Client », « Manager », « Machine »…) ;\n"
+        . "- écris chaque notification en français et en anglais, avec exactement le même sens et le même niveau de détail dans les deux langues, et au même rang dans l'ordre.\n\n"
+        . "Classe les notifications dans l'ordre de priorité attendu : la première est la plus prioritaire.\n\n"
         . "Schéma JSON exact :\n"
         . '{"notifications":[{"source_fr":"...","source_en":"...","texte_fr":"...","texte_en":"..."}]}' . "\n\n"
         . "Réponds uniquement avec cet objet JSON, sans texte autour.";
 
     $messages = [
-        ['role' => 'system', 'content' => 'Tu es un générateur de mises en situation professionnelles réalistes pour un jeu d’orientation. Tu réponds uniquement avec un objet JSON valide, sans texte autour.'],
+        ['role' => 'system', 'content' => 'Tu es un concepteur de mises en situation professionnelles réalistes pour un jeu d’orientation. Chaque notification est un mini-scénario de 1 à 2 phrases, avec assez de contexte pour être classé par priorité et importance. Tu réponds uniquement avec un objet JSON valide, sans texte autour.'],
         ['role' => 'user', 'content' => $prompt],
     ];
 
     for ($essai = 0; $essai < 3; $essai++) {
-        $reponse = appel_deepseek($config, $messages, 4000, 1.0);
+        $reponse = appel_deepseek($config, $messages, 6000, 0.9);
         $notifications = valider_notifications_ia($reponse);
         if ($notifications !== null) {
             return $notifications;

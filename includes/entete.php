@@ -18,7 +18,7 @@ $lienActif = static fn (string $cle): string => $page_active === $cle ? ' aria-c
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=<?= (int) @filemtime(__DIR__ . '/../assets/style.css') ?>">
 </head>
 <body class="page-<?= e($page_active !== '' ? $page_active : 'accueil') ?><?= $page_classe !== '' ? ' ' . e($page_classe) : '' ?>">
 <a class="lien-evitement" href="#contenu"><?= e(t('nav.aller_contenu')) ?></a>
